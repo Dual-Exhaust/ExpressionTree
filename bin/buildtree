@@ -5,12 +5,7 @@ import sys
 
 try:
     expression = ''.join(sys.argv[1:])
-    print('INFIX: ' + expression)
-    interpreter = Interpreter(expression)
-    print('RESULT: ' + interpreter.getpostfix())
-    treebuilder = TreeBuilder(interpreter.getpostfix())
-    print('=========================')
-    data = treebuilder.gettreerootnode()
-    data.printtreefromroot()
+    expressiontree.printdata(expression)
+
 except:
     print('The expression entered caused some problems.')
