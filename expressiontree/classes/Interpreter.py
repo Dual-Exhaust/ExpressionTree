@@ -1,4 +1,4 @@
-from expressiontree.Stack import Stack
+from Classes.Stack import Stack
 
 
 class Interpreter:

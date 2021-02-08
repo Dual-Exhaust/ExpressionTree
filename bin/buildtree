@@ -1,6 +1,7 @@
 #!/usr/bin/python
+
+import expressiontree
 import sys
-from expressiontree import Interpreter, TreeBuilder
 
 try:
     expression = ''.join(sys.argv[1:])

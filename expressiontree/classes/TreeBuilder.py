@@ -1,5 +1,5 @@
-from expressiontree.Node import Node
-from expressiontree.Stack import Stack
+from Classes.Node import Node
+from Classes.Stack import Stack
 class TreeBuilder:
     def __init__(self, expression):
         self.postfix = expression
