@@ -4,9 +4,10 @@ def printdata(expression):
     print('INFIX: ' + exp)
     interpreter = Interpreter(exp)
     print('POSTFIX: ' + interpreter.getpostfix())
+    print('PREFIX:: ' + interpreter.postfixtoprefix(interpreter.getpostfix()))
     treebuilder = TreeBuilder(interpreter.getpostfix())
     print('============================')
-    data = treebuilder.getrootnode()
+    data = treebuilder.gettreerootnode()
     data.printtreefromroot()
 
 
@@ -148,6 +149,22 @@ class Interpreter:
 
         self.postfix = self.output
 
+    def postfixtoprefix(self, expression):
+        stack = []
+        
+        for x in range(len(expression)):
+            if expression[x] in self.operators:
+                tmp1 = stack[-1]
+                stack.pop()
+                tmp2 = stack[-1]
+                stack.pop()
+                stack.append(expression[x] + tmp2 + tmp1)
+            else:
+                stack.append(expression[x])
+        out = ''
+        for char in stack:
+            out += char
+        return out
 
 class TreeBuilder:
     def __init__(self, expression):

@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 
 import expressiontree
 import sys
@@ -6,6 +6,5 @@ import sys
 try:
     expression = ''.join(sys.argv[1:])
     expressiontree.printdata(expression)
-
 except:
     print('The expression entered caused some problems.')
