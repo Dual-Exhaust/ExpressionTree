@@ -1,24 +1,41 @@
+import math
+
 
 def printdata(expression):
+    output = ''
     exp = ''.join(expression.split(' '))
-    print('INFIX: ' + exp)
+    output += ('INFIX: ' + exp)
     interpreter = Interpreter(exp)
-    print('POSTFIX: ' + interpreter.getpostfix())
-    print('PREFIX:: ' + interpreter.postfixtoprefix(interpreter.getpostfix()))
+    output += ('\nPOSTFIX: ' + interpreter.getpostfix())
+    output += ('\nPREFIX:: ' + interpreter.postfixtoprefix(interpreter.getpostfix()))
     treebuilder = TreeBuilder(interpreter.getpostfix())
-    print('============================')
-    data = treebuilder.gettreerootnode()
-    data.printtreefromroot()
 
+    data = treebuilder.gettreerootnode()
+    if data.getsolvable():
+        output += '\nRESULT: ' + str(data.calculateresult())
+    else:
+        output += '\nExpression entered is not solvable.'
+
+    output += '\n============================'
+    output += data.printtreefromroot()
+    output += '\n============================\n'
+    return output
 
 
 class Node:
-    def __init__(self, value=None, id=-1):
+    def __init__(self, value=None, id=-1, solve=True):
         self.value = value
         self.left = None
         self.right = None
         # Set to differentiate nodes, only used in __str__()
         self.ID = id
+        self.solvable = solve
+
+    def setsolvable(self, solve):
+        self.solvable = solve
+
+    def getsolvable(self):
+        return self.solvable
 
     def getleftchild(self):
         return self.left
@@ -47,18 +64,81 @@ class Node:
     # All that is used for is the relational spacing between layers.
     # If the default for spacemultipier is more than zero, the tree will be printed more to the right in the console.
     def printtreefromroot(self, spacemultiplier=0):
+        output = ''
         # Two children
         if not (self.getleftchild() is None or self.getrightchild() is None):
             # We print the right-most node first.
-            self.getrightchild().printtreefromroot(spacemultiplier + 1)
+            output += self.getrightchild().printtreefromroot(spacemultiplier + 1)
             # Print the root node value
-            print('    ' * spacemultiplier + self.getvalue())
+            output += ('\n' + '    ' * spacemultiplier + self.getvalue())
             # Print the left-most node last.
-            self.getleftchild().printtreefromroot(spacemultiplier + 1)
+            output += self.getleftchild().printtreefromroot(spacemultiplier + 1)
         # Base case - no children.
         elif self.getleftchild() is None and self.getrightchild() is None:
             # If the node has no children just print the node's value.
-            print('    ' * spacemultiplier + self.getvalue())
+            output += ('\n' + '    ' * spacemultiplier + self.getvalue())
+        return output
+
+    def calculateresult(self):
+        operators = ['+', '-', '/', '*', '^']
+        if self.solvable:
+            # Two children
+            if not (self.getleftchild() is None or self.getrightchild() is None):
+                # If both children are operands
+                if self.getleftchild().getvalue() not in operators and self.getrightchild().getvalue() not in operators:
+                    if self.getvalue() == '+':
+                        return float(self.getleftchild().getvalue()) + float(self.getrightchild().getvalue())
+                    if self.getvalue() == '-':
+                        return float(self.getleftchild().getvalue()) - float(self.getrightchild().getvalue())
+                    if self.getvalue() == '/':
+                        return float(self.getleftchild().getvalue()) / float(self.getrightchild().getvalue())
+                    if self.getvalue() == '*':
+                        return float(self.getleftchild().getvalue()) * float(self.getrightchild().getvalue())
+                    if self.getvalue() == '^':
+                        return math.pow(float(self.getleftchild().getvalue()), float(self.getrightchild().getvalue()))
+                # If left child is operand and right is operator
+                if self.getleftchild().getvalue() not in operators and self.getrightchild().getvalue() in operators:
+                    if self.getvalue() == '+':
+                        return float(self.getleftchild().getvalue()) + float(self.getrightchild().calculateresult())
+                    if self.getvalue() == '-':
+                        return float(self.getleftchild().getvalue()) - float(self.getrightchild().calculateresult())
+                    if self.getvalue() == '/':
+                        return float(self.getleftchild().getvalue()) / float(self.getrightchild().calculateresult())
+                    if self.getvalue() == '*':
+                        return float(self.getleftchild().getvalue()) * float(self.getrightchild().calculateresult())
+                    if self.getvalue() == '^':
+                        return math.pow(float(self.getleftchild().getvalue()),
+                                        float(self.getrightchild().calculateresult()))
+                # If left child is operator and right is operand
+                if self.getleftchild().getvalue() in operators and self.getrightchild().getvalue() not in operators:
+                    if self.getvalue() == '+':
+                        return float(self.getleftchild().calculateresult()) + float(self.getrightchild().getvalue())
+                    if self.getvalue() == '-':
+                        return float(self.getleftchild().calculateresult()) - float(self.getrightchild().getvalue())
+                    if self.getvalue() == '/':
+                        return float(self.getleftchild().calculateresult()) / float(self.getrightchild().getvalue())
+                    if self.getvalue() == '*':
+                        return float(self.getleftchild().calculateresult()) * float(self.getrightchild().getvalue())
+                    if self.getvalue() == '^':
+                        return math.pow(float(self.getleftchild().calculateresult()),
+                                        float(self.getrightchild().getvalue()))
+                # If left child is operator and right is operator
+                if self.getleftchild().getvalue() in operators and self.getrightchild().getvalue() in operators:
+                    if self.getvalue() == '+':
+                        return float(self.getleftchild().calculateresult()) + float(
+                            self.getrightchild().calculateresult())
+                    if self.getvalue() == '-':
+                        return float(self.getleftchild().calculateresult()) - float(
+                            self.getrightchild().calculateresult())
+                    if self.getvalue() == '/':
+                        return float(self.getleftchild().calculateresult()) / float(
+                            self.getrightchild().calculateresult())
+                    if self.getvalue() == '*':
+                        return float(self.getleftchild().calculateresult()) * float(
+                            self.getrightchild().calculateresult())
+                    if self.getvalue() == '^':
+                        return math.pow(float(self.getleftchild().calculateresult()),
+                                        float(self.getrightchild().calculateresult()))
 
     def __str__(self):
         return str(self.getvalue())
@@ -151,7 +231,7 @@ class Interpreter:
 
     def postfixtoprefix(self, expression):
         stack = []
-        
+
         for x in range(len(expression)):
             if expression[x] in self.operators:
                 tmp1 = stack[-1]
@@ -166,6 +246,7 @@ class Interpreter:
             out += char
         return out
 
+
 class TreeBuilder:
     def __init__(self, expression):
         self.postfix = expression
@@ -174,14 +255,16 @@ class TreeBuilder:
         # build the tree and set the treerootnode on initialization
         self.buildexpressiontree()
 
-
     def gettreerootnode(self):
         return self.root
 
     def buildexpressiontree(self):
         tempstack = Stack()
+        solve = True
         for each in self.postfix:
             if each not in self.operators:
+                if not each.isdigit():
+                    solve = False
                 tempstack.push(Node(value=each))
             else:
                 tmpnode = Node(value=each)
@@ -189,6 +272,7 @@ class TreeBuilder:
                 tmpnode.setleftchild(tempstack.pop())
                 tempstack.push(tmpnode)
         self.root = tempstack.pop()
+        self.root.setsolvable(solve)
 
     def printbreadthfirst(self):
         currentlvl = []
@@ -214,7 +298,7 @@ class TreeBuilder:
                         nextlvl.append(node.getrightchild())
 
                 for char in currentlvl:
-                    print('\t'*(depth-x+1) + str(char), end='')
+                    print('\t' * (depth - x + 1) + str(char), end='')
 
                 print()
                 currentlvl = nextlvl
@@ -224,8 +308,6 @@ class TreeBuilder:
         if node is None:
             return 0
         elif node.getleftchild() is not None and node.getrightchild() is not None:
-            return max(self.getdepth(node.getleftchild()), self.getdepth(node.getrightchild())) + 1;
+            return max(self.getdepth(node.getleftchild()), self.getdepth(node.getrightchild())) + 1
         else:
             return 1
-
-
