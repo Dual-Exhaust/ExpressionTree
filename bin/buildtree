@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
 
+# this is for use with a CLI
+# used to print directly to console but since the GUI/bootstrap.exe was developed this has not been tested
+# there is no guarantee that it still functions properly
+
 import expressiontree
 import sys
 
