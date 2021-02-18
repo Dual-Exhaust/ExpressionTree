@@ -31,8 +31,8 @@ outputbox = tk.Text()
 
 enterbutton = tk.Button(
     text="Enter",
-    width=25,
-    height=5,
+    width=15,
+    height=3,
     bg="blue",
     fg="yellow",
     command=printtree
@@ -40,8 +40,8 @@ enterbutton = tk.Button(
 
 aboutbutton = tk.Button(
     text="About",
-    width=25,
-    height=5,
+    width=15,
+    height=3,
     bg="blue",
     fg="yellow",
     command=about
